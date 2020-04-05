@@ -16,6 +16,8 @@
   },
   "homepage": "https://github.com/hassainsaeed/errand#readme",
   "dependencies": {
+    "db-migrate": "^0.11.6",
+    "db-migrate-mysql": "^2.1.1",
     "mysql": "^2.18.1"
   }
 }
