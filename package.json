@@ -2,8 +2,10 @@
   "name": "errand",
   "version": "0.0.1",
   "description": "An application that allows users to run errands for others in their community",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
+    "start": "node src/index.js",
+    "inspect": "node --inspect src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,8 +18,13 @@
   },
   "homepage": "https://github.com/hassainsaeed/errand#readme",
   "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "db-migrate": "^0.11.6",
     "db-migrate-mysql": "^2.1.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "method-override": "^3.0.0",
     "mysql": "^2.18.1"
   }
 }
