@@ -17,6 +17,7 @@
     "rules": {
       "global-require": "off",
       "no-unused-vars": ["error", { "argsIgnorePattern": "next" }],
-      "no-console": "off"
+      "no-console": "off",
+      "object-shorthand": "off"
     }
 }
