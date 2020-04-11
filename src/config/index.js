@@ -2,9 +2,9 @@ const dotenv = require('dotenv');
 
 const envFound = dotenv.config();
 if (!envFound) {
-  //This error should crash the whole process
+  // This error should crash the whole process
 
-  throw new Error("!! Could not find .env file !!")
+  throw new Error('!! Could not find .env file !!');
 }
 
 module.exports = {
@@ -12,5 +12,5 @@ module.exports = {
   DB_HOST: process.env.DB_HOST,
   DB_USER: process.env.DB_USER,
   DB_PASSWORD: process.env.DB_PASSWORD,
-  DB_NAME: process.env.DB_NAME
+  DB_NAME: process.env.DB_NAME,
 };

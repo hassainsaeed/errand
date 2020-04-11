@@ -1,66 +1,65 @@
-'use strict';
 
-var dbm;
-var type;
-var seed;
+let dbm;
+let type;
+let seed;
 
 /**
   * We receive the dbmigrate dependency from dbmigrate initially.
   * This enables us to not have to rely on NODE_PATH.
   */
-exports.setup = function(options, seedLink) {
+exports.setup = function (options, seedLink) {
   dbm = options.dbmigrate;
   type = dbm.dataType;
   seed = seedLink;
 };
 
-exports.up = function(db, callback) {
+exports.up = function (db, callback) {
   db.createTable('runner_jobs', {
     id: {
       type: 'int',
-      primaryKey: true
+      primaryKey: true,
     },
     runners_user_id: {
-      type: 'int'
+      type: 'int',
     },
     status: {
       type: 'string',
-      length: 20
+      length: 20,
     },
     created_at: {
-      type: 'datetime'
+      type: 'datetime',
     },
-    ended_at : {
-      type: 'datetime'
+    ended_at: {
+      type: 'datetime',
     },
     is_accepting_requests: {
-      type: 'boolean'
+      type: 'boolean',
     },
     store_name: {
       type: 'string',
-      length: 100
+      length: 100,
     },
     runner_latitude: {
       type: 'string',
-      length: 40
+      length: 40,
     },
     runner_longitude: {
       type: 'string',
-      length: 40
+      length: 40,
     },
     radius: {
-      type: 'int'
-    }
-  }, function(err) {
+      type: 'int',
+    },
+  }, (err) => {
     if (err) return callback(err);
     return callback();
   });
 };
 
-exports.down = function(db, callback) {
-  db.dropTable('runner_jobs', callback)
+exports.down = function (db, callback) {
+  db.dropTable('runner_jobs', callback);
 };
 
 exports._meta = {
-  "version": 1
+  version: 1,
 };

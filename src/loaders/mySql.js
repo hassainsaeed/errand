@@ -1,22 +1,22 @@
 // This module connects the application to the MySql DB
 
-let mysql = require('mysql'),
-config = require('../config');
+const mysql = require('mysql');
+const config = require('../config');
 
-let connection = mysql.createConnection({
+const connection = mysql.createConnection({
   host: config.DB_HOST,
   user: config.DB_USER,
   password: config.DB_PASSWORD,
-  database: config.DB_NAME
-})
+  database: config.DB_NAME,
+});
 
-connection.connect(function(err) {
+connection.connect((err) => {
   if (err) {
-    return console.error('error: ' + err.message);
+    return console.error(`error: ${err.message}`);
   }
 
-  console.log('Connected to the MySQL server. 🔗');
+  return console.log('Connected to the MySQL server. 🔗');
 });
 
 
-module.exports = connection
+module.exports = connection;

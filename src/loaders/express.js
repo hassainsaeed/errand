@@ -2,16 +2,14 @@
 // and configures all the routes
 
 
-const express = require('express'),
-bodyParser = require('body-parser'),
-cors = require('cors'),
-auth = require('../api/auth'),
-runner_events = require('../api/runner_events')
-orders = require('../api/orders')
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const auth = require('../api/auth');
+const runnerEvents = require('../api/runnerEvents');
+const orders = require('../api/orders');
 
 
 async function expressSetUp(app) {
-
   // Configure the Heartbeat (status checks) endpoints
   app.get('/status', (req, res) => {
     res.status(200).end();
@@ -36,27 +34,26 @@ async function expressSetUp(app) {
   // LOAD THE API ENDPOINTS
 
   // 1 - Load the authenticate users route
-  app.use("/api/auth", auth)
+  app.use('/api/auth', auth);
 
   // 2 - Load the Runner Events route
-  app.use("/api/runner_events", runner_events)
+  app.use('/api/runnerevents', runnerEvents);
 
   // 3 - Load the Orders route
-  app.use("/api/orders", orders)
+  app.use('/api/orders', orders);
 
   // NOTE: If i want to modularize loading all the routes later down the line, use this:
-  //app.use(config.api.prefix, routes());
+  // app.use(config.api.prefix, routes());
 
-  /// catch 404 and forward to error handler
+  // / catch 404 and forward to error handler
   app.use((req, res, next) => {
     const err = new Error('Not Found');
-    err['status'] = 404;
+    err.status = 404;
     next(err);
   });
 
-  /// error handlers
+  // / error handlers
   app.use((err, req, res, next) => {
-
     // Handle 401 thrown by express-jwt library
     if (err.name === 'UnauthorizedError') {
       return res
@@ -75,6 +72,6 @@ async function expressSetUp(app) {
       },
     });
   });
-};
+}
 
-module.exports =  expressSetUp
+module.exports = expressSetUp;
