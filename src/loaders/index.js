@@ -3,11 +3,11 @@
 
 async function loader(expressApp) {
   const mySqlConnection = await require('./mySql');
-  console.log('MySQL DB Loaded and Ready 📊');
+  console.log('📊 MySQL DB Loaded and Ready');
 
   const expressSetUp = await require('./express');
   expressSetUp(expressApp);
-  console.log('Express Loaded and Ready 🚀');
+  console.log('🚀 Express Loaded and Ready');
 }
 
 module.exports = loader;

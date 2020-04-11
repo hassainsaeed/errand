@@ -15,7 +15,7 @@ connection.connect((err) => {
     return console.error(`error: ${err.message}`);
   }
 
-  return console.log('Connected to the MySQL server. 🔗');
+  return console.log('🔗 Connected to the MySQL server.');
 });
 
 
