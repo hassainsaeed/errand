@@ -16,14 +16,24 @@ router.post('/signup', async (req, res, next) => {
     const token = await authServiceInstance.signUp(firstName, lastName, email, password, phoneNumber);
     console.log(`😊 ${email} is now signed up!`);
     return res.status(201).json({ token });
-  } catch (e) {
-    console.log(`🔥 Error! ${e}`);
-    return next(e);
+  } catch (err) {
+    console.log(`🔥 Error! ${err}`);
+    return next(err);
   }
 });
 
-router.post('/signin', (req, res) => {
-  res.send('Account has signed in');
+router.post('/signin', async (req, res, next) => {
+  const { email } = req.body;
+  const { password } = req.body;
+
+  try {
+    const token = await authServiceInstance.signIn(email, password);
+    console.log(`😊 ${email} is now signed in!`);
+    return res.status(201).json({ token });
+  } catch (err) {
+    console.log(`🔥 Error! ${err}`);
+    return next(err);
+  }
 });
 
 module.exports = router;

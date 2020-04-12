@@ -42,6 +42,38 @@ function generateToken(user, today) {
   config.JWT_SECRET);
 }
 
+function dbQueryForUser(email, password) {
+  return new Promise(((resolve, reject) => {
+    mySqlConnection.query('SELECT * FROM users WHERE email = ? ', email, (err, res) => {
+      // TODO: make it so throwing an error does not crash the app
+      if (res.length < 1) throw '❌ Could not verify email';
+      console.log('✔️  Email verified')
+      const user = res[0];
+      const hashedPassword = user.password;
+      const { salt } = user;
+      console.log('🤔  Verifying password...')
+      if (generateHash(password, salt).passwordWithSaltHash == hashedPassword) {
+        console.log('✔️  Password verfied');
+        resolve(user);
+      } else {
+        throw '❌ Could not verify password';
+      }
+    });
+  }));
+}
+
+function dbInsertNewUser(user) {
+  return new Promise(((resolve, reject) => {
+    mySqlConnection.query('INSERT INTO users SET ?', user, (err, res) => {
+      // TODO: make it so throwing an error does not crash the app
+      if (err) throw err;
+
+      console.log('✔️  Created user ID: ', res.insertId);
+      resolve(user);
+    });
+  }));
+}
+
 async function signUp(firstName, lastName, email, password, phoneNumber) {
   try {
     const {
@@ -58,21 +90,36 @@ async function signUp(firstName, lastName, email, password, phoneNumber) {
       salt: salt,
       created_at: today.toISOString().slice(0, 19).replace('T', ' '),
     };
-    mySqlConnection.query('INSERT INTO users SET ?', user, (err, res) => {
-      // TODO: make sure no two users with same email can sign up
-      // TODO: make it so throwing an error does not crash the app
-      if (err) throw err;
-      // Sample of res: {"fieldCount":0,"affectedRows":1,"insertId":11,"serverStatus":2,"warningCount":0,"message":"","protocol41":true,"changedRows":0}
-      console.log('✔️  Created user ID: ', res.insertId);
-    });
-    return generateToken(user, today);
-  } catch (e) {
-    console.log(`🔥 Error! ${e}`);
-    throw e;
+    return dbInsertNewUser(user)
+      .then((user) => generateToken(user, today))
+      .catch((err) => {
+        console.log(`🔥🔥🔥 ${err.message}`);
+        throw err;
+      });
+  } catch (err) {
+    console.log(`🔥 Error! ${err}`);
+    throw err;
+  }
+}
+
+async function signIn(email, password) {
+  const today = new Date();
+  try {
+    console.log('🤔  Verifying email address...');
+    return dbQueryForUser(email, password)
+      .then((user) => generateToken(user, today))
+      .catch((err) => {
+        console.log(`🔥🔥🔥 ${err.message}`);
+        throw err;
+      });
+  } catch (err) {
+    console.log(`🔥🔥 ${err.message}`);
+    throw err;
   }
 }
 
 
 module.exports = {
-  signUp,
+  signUp: signUp,
+  signIn: signIn,
 };
