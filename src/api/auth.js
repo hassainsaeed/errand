@@ -6,8 +6,8 @@ const router = express.Router();
 router.post('/signup', async (req, res, next) => {
   const firstName = req.body.first_name;
   const lastName = req.body.last_name;
-  const { email } = req.body;
-  const { password } = req.body;
+  const email = req.body.email;
+  const password = req.body.password;
   const phoneNumber = req.body.phone_number;
 
   console.log(`🥺 User with email ${email} is trying to sign up for Errand`);
@@ -23,8 +23,8 @@ router.post('/signup', async (req, res, next) => {
 });
 
 router.post('/signin', async (req, res, next) => {
-  const { email } = req.body;
-  const { password } = req.body;
+  const email = req.body.email;
+  const password = req.body.password;
 
   try {
     const token = await authServiceInstance.signIn(email, password);
