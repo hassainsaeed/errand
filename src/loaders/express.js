@@ -5,7 +5,7 @@
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const auth = require('../api/auth');
-const runnerEvents = require('../api/runnerEvents');
+const runnerJobs = require('../api/runnerJobs');
 const orders = require('../api/orders');
 
 
@@ -36,8 +36,8 @@ async function expressSetUp(app) {
   // 1 - Load the authenticate users route
   app.use('/api/auth', auth);
 
-  // 2 - Load the Runner Events route
-  app.use('/api/runnerevents', runnerEvents);
+  // 2 - Load the Runner Jobs route
+  app.use('/api/runnerjobs', runnerJobs);
 
   // 3 - Load the Orders route
   app.use('/api/orders', orders);
