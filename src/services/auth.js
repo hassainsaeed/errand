@@ -45,7 +45,6 @@ function generateToken(user, today) {
 function dbQueryForUser(email, password) {
   return new Promise(((resolve, reject) => {
     mySqlConnection.query('SELECT * FROM users WHERE email = ? ', email, (err, res) => {
-      // TODO: make it so throwing an error does not crash the app
       if (res.length < 1) {
         reject(new Error('❌ Could not verify email'));
       } else {
