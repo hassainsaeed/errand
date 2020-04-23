@@ -15,7 +15,7 @@ router.post('/', middleware.verifyToken, async (req, res, next) => {
   try {
     const runnerJob = await runnerService.createJob(userId, runnerLatitude, runnerLongitude, radius, storeName);
     console.log(`💪 ${userId} just created a new job at ${storeName}!`);
-    return res.status(200).json({ runnerJob });
+    return res.status(201).json({ runnerJob });
   } catch (err) {
     console.log(`🔥 Error! ${err}`);
     return next(err);
