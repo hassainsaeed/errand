@@ -66,14 +66,15 @@ function dbQueryForUser(email, password) {
   }));
 }
 
-function dbInsertNewUser(user) {
+function dbInsertNewUser(newUserParams) {
   return new Promise(((resolve, reject) => {
-    mySqlConnection.query('INSERT INTO users SET ?', user, (err, res) => {
+    mySqlConnection.query('INSERT INTO users SET ?', newUserParams, (err, res) => {
       if (err) {
         reject(new Error(`❌ Something went wrong while trying to create your account: ${err.message}`));
       } else {
-        console.log('✔️  Created user ID: ', res.insertId);
-        resolve(user);
+        newUserParams.id = res.insertId;
+        console.log('✔️  Created user ID: ', newUserParams.id);
+        resolve(newUserParams);
       }
     });
   }));

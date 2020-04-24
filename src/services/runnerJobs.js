@@ -1,28 +1,28 @@
 const mySqlConnection = require('../loaders/mySql');
 
-function dbCreateNewRunnerJob(newJobInput) {
+function dbCreateNewRunnerJob(newRunnerJobParams) {
   return new Promise(((resolve, reject) => {
-    mySqlConnection.query('INSERT INTO runner_jobs SET ? ', newJobInput, (err, res) => {
+    mySqlConnection.query('INSERT INTO runner_jobs SET ? ', newRunnerJobParams, (err, res) => {
       if (err) {
         reject(new Error(`❌ Something went wrong when trying to create the runner job: ${err.message}`));
       } else {
-        console.log('✔️  Created runner job ID: ', res.insertId);
-        resolve(newJobInput);
+        newRunnerJobParams.id = res.insertId;
+        console.log('✔️  Created runner job ID: ', newRunnerJobParams.id);
+        resolve(newRunnerJobParams);
       }
     });
   }));
 }
 
-// TODO: Update this function so it can accept optional parameters
-// e.g. is_accepting_requests = true
+
 function dbGetActiveRunnerJobs() {
   const status = 'ACTIVE';
+  const isAcceptingRequests = true;
   return new Promise(((resolve, reject) => {
-    mySqlConnection.query('SELECT * FROM runner_jobs WHERE status = ? ', status, (err, res) => {
+    mySqlConnection.query('SELECT * FROM runner_jobs WHERE status = ? AND is_accepting_requests = ?', [status, isAcceptingRequests], (err, res) => {
       if (err) {
         reject(new Error(`❌ Something went wrong when querying for runner job: ${err.message}`));
       } else {
-        // console.log(JSON.stringify(res));
         resolve(res);
       }
     });
@@ -48,6 +48,14 @@ function isWithinDistance(runnerLatitude, runnerLongitude, radius, requesterLati
   if (distance < radius) return true;
   return false;
 }
+
+// function requestRunners(order) {
+//   // First grab list of all runners delivering to location of requester
+//   // runnersNearBy = getJobsDeliveringToLocation(order.requester_latitude, order.requester_longitude)
+//   // For each runnerNearBy, send push notification to them for the job
+//   // If runner accepts, they will send a PUT request to the orders API
+//   // If runner rejects or does not answer in time, order is cancelled
+// }
 
 
 function createJob(userId, runnerLatitude, runnerLongitude, radius, storeName) {

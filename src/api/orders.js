@@ -1,16 +1,16 @@
 const express = require('express');
-const middleware = require('./middleware')
-const orders = require('../services/orders')
+const middleware = require('./middleware');
+const ordersService = require('../services/orders');
 
 const router = express.Router();
 
 
 // GET To get specific order, or list of orders, based on ID
 router.get('/', middleware.verifyToken, async (req, res, next) => {
-  const ids = req.params.ids;
+  const ids = req.query.ids.split(',');
 
   try {
-    const returnedOrders = await orders.getOrders(ids);
+    const returnedOrders = await ordersService.getOrders(ids);
     console.log(`Returning Order with ids: ${ids} `);
     return res.status(200).json({ returnedOrders });
   } catch (err) {
@@ -28,7 +28,7 @@ router.post('/', middleware.verifyToken, async (req, res, next) => {
   const requesterLongitude = req.body.requester_longitude;
 
   try {
-    const createdOrder = await orders.createOrder(requesterUserId, list, storeName, requesterLatitude, requesterLongitude);
+    const createdOrder = await ordersService.createOrder(requesterUserId, list, storeName, requesterLatitude, requesterLongitude);
     console.log(`${requesterUserId} just created a new Order`);
     return res.status(201).json({ createdOrder });
   } catch (err) {
@@ -37,16 +37,21 @@ router.post('/', middleware.verifyToken, async (req, res, next) => {
   }
 });
 
+// PUT to assign an order to runner
+router.put('/assign', middleware.verifyToken, async (req, res, next) => {
+  const runnerUserId = req.body.user_id;
+  const runnerJobId = req.body.job_id;
+  const orderId = req.body.order_id;
+
+  try {
+    const assignedOrder = await ordersService.assignOrder(runnerUserId, runnerJobId, orderId);
+    console.log(`${runnerUserId} is now assigned to order ${orderId}`);
+    return res.status(200).json({ assignedOrder });
+  } catch (err) {
+    console.log(`🔥 Error! ${err}`);
+    return next(err);
+  }
+});
+
 
 module.exports = router;
-
-
-// Flow:
-// Runner makes a JOB
-// User starts making an order but nothing sent to backend
-// User submits an order request
-// Gets all the runners returning near them
-// Send push notifixation to the runners delivering near them
-// Runner can accept the order request
-// Order is created
-// Runner can view order any time
