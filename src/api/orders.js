@@ -27,8 +27,9 @@ router.post('/', middleware.verifyToken, async (req, res, next) => {
   const requesterLongitude = req.body.requester_longitude;
 
   try {
-    const createdOrder = await ordersService.createOrder(requesterUserId, list, requesterLatitude, requesterLongitude);
-    console.log(`${requesterUserId} just created a new Order`);
+    const createdOrder = await ordersService.createOrder(requesterUserId, list,
+      requesterLatitude, requesterLongitude);
+    console.log(`💪 ${requesterUserId} just created a new Order`);
     return res.status(201).json({ createdOrder });
   } catch (err) {
     console.log(`🔥 Error! ${err}`);
@@ -44,8 +45,9 @@ router.put('/assign', middleware.verifyToken, async (req, res, next) => {
   const orderId = req.body.order_id;
 
   try {
-    const assignedOrder = await ordersService.assignOrder(runnerUserId, runnerJobId, storeName, orderId);
-    console.log(`${runnerUserId} is now assigned to order ${orderId}`);
+    const assignedOrder = await ordersService.assignOrder(runnerUserId,
+      runnerJobId, storeName, orderId);
+    console.log(`💪 ${runnerUserId} is now assigned to order ${orderId}`);
     return res.status(200).json({ assignedOrder });
   } catch (err) {
     console.log(`🔥 Error! ${err}`);

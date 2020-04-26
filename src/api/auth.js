@@ -13,7 +13,8 @@ router.post('/signup', async (req, res, next) => {
   console.log(`🥺 User with email ${email} is trying to sign up for Errand`);
 
   try {
-    const token = await authServiceInstance.signUp(firstName, lastName, email, password, phoneNumber);
+    const token = await authServiceInstance.signUp(firstName,
+      lastName, email, password, phoneNumber);
     console.log(`😊 ${email} is now signed up!`);
     return res.status(201).json({ token });
   } catch (err) {

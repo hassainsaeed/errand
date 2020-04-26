@@ -34,6 +34,7 @@ function generateToken(user, today) {
   expiry.setDate(today.getDate() + 60);
 
   return jwt.sign({
+    id: user.id,
     email: user.email,
     first_name: user.first_name,
     last_name: user.last_name,
@@ -96,7 +97,7 @@ async function signUp(firstName, lastName, email, password, phoneNumber) {
     created_at: today.toISOString().slice(0, 19).replace('T', ' '),
   };
   return dbInsertNewUser(user)
-    .then((user) => generateToken(user, today))
+    .then((createdUser) => generateToken(createdUser, today))
     .catch((err) => {
       throw err;
     });

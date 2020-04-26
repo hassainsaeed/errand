@@ -33,10 +33,13 @@ function dbGetActiveRunnerJobs() {
 // between runner and requester and returns true if distance is less than radius
 // Taken from https://www.movable-type.co.uk/scripts/latlong.html
 // Note 'as crow flies' is different than driving distance, so we many need to change this
-function isWithinDistance(runnerLatitude, runnerLongitude, radius, requesterLatitude, requesterLongitude) {
+function isWithinDistance(runnerLatitude, runnerLongitude, radius,
+  requesterLatitude, requesterLongitude) {
   const earthsRadiusinKm = 6371;
-  const deltaLatInRad = ((parseFloat(requesterLatitude) - parseFloat(runnerLatitude)) * Math.PI) / 180;
-  const deltaLongInRad = ((parseFloat(requesterLongitude) - parseFloat(runnerLongitude)) * Math.PI) / 180;
+  const deltaLatInRad = ((parseFloat(requesterLatitude) - parseFloat(runnerLatitude))
+  * Math.PI) / 180;
+  const deltaLongInRad = ((parseFloat(requesterLongitude) - parseFloat(runnerLongitude))
+  * Math.PI) / 180;
   const runnerLatInRad = (parseFloat(runnerLatitude) * Math.PI) / 180;
   const requesterLatInRad = (parseFloat(requesterLatitude) * Math.PI) / 180;
   const a = Math.sin(deltaLatInRad / 2) * Math.sin(deltaLatInRad / 2)
@@ -51,7 +54,8 @@ function isWithinDistance(runnerLatitude, runnerLongitude, radius, requesterLati
 
 // function requestRunners(order) {
 //   // First grab list of all runners delivering to location of requester
-//   // runnersNearBy = getJobsDeliveringToLocation(order.requester_latitude, order.requester_longitude)
+//   // runnersNearBy = getJobsDeliveringToLocation(order.requester_latitude,
+// order.requester_longitude)
 //   // For each runnerNearBy, send push notification to them for the job
 //   // If runner accepts, they will send a PUT request to the orders API
 //   // If runner rejects or does not answer in time, order is cancelled
@@ -80,7 +84,7 @@ function createJob(userId, runnerLatitude, runnerLongitude, radius, storeName) {
 }
 
 function getJobs() {
-  console.log(' Getting all active runner jobs ...');
+  console.log('🏃 Getting all active runner jobs ...');
   return dbGetActiveRunnerJobs()
     .then((runnerJobs) => runnerJobs)
     .catch((err) => {
@@ -89,14 +93,16 @@ function getJobs() {
 }
 
 function getJobsDeliveringToLocation(requesterLatitude, requesterLongitude) {
-  console.log(' Getting all active runner jobs delivering to this user\'s location...');
+  console.log('🏃 Getting all active runner jobs delivering to this user\'s location...');
   return dbGetActiveRunnerJobs()
     .then((results) => {
       const allRunnerJobs = results;
       let i;
       const runnerJobsDeliveringToLocation = [];
       for (i = 0; i < allRunnerJobs.length; i++) {
-        if (isWithinDistance(allRunnerJobs[i].runner_latitude, allRunnerJobs[i].runner_longitude, allRunnerJobs[i].radius, requesterLatitude, requesterLongitude)) {
+        if (isWithinDistance(allRunnerJobs[i].runner_latitude,
+          allRunnerJobs[i].runner_longitude, allRunnerJobs[i].radius,
+          requesterLatitude, requesterLongitude)) {
           runnerJobsDeliveringToLocation.push(allRunnerJobs[i]);
         }
       }

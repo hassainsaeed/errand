@@ -1,5 +1,5 @@
 const mySqlConnection = require('../loaders/mySql');
-const runnerService = require('./runnerJobs');
+// const runnerService = require('./runnerJobs');
 
 
 // function checkIfOrderAccepted(orderID) {
@@ -51,7 +51,7 @@ function dbUpdateOrderWithRunnerInfo(runnerInfo, orderId) {
 
 
 function getOrders(ids) {
-  console.log(`Fetching order IDs of ${ids}`);
+  console.log(`🎁 Fetching order IDs of ${ids}`);
   return dbGetOrdersByIds(ids)
     .then((orders) => orders)
     .catch((err) => {
@@ -61,7 +61,7 @@ function getOrders(ids) {
 
 
 function createOrder(requesterUserId, list, requesterLatitude, requesterLongitude) {
-  console.log('Creating a brand new order ...');
+  console.log('🎁 Creating a brand new order ...');
   const today = new Date();
   const newOrderInput = {
     requester_user_id: requesterUserId,
@@ -88,12 +88,14 @@ function createOrder(requesterUserId, list, requesterLatitude, requesterLongitud
 function assignOrder(runnerUserId, runnerJobId, storeName, orderId) {
   // TO DO: add "Time runner accepted job to the orders"
   // today = new Date() ---> time runner accepted job
+  console.log(`🎁🏃 Assigning Runner ${runnerUserId} to Order ${orderId}`);
   const runnerInfo = {
     runner_user_id: runnerUserId,
     runner_job_id: runnerJobId,
     store_name: storeName,
     status: 'IN PROGRESS',
   };
+
   return dbUpdateOrderWithRunnerInfo(runnerInfo, orderId)
     .then((assignedOrder) => assignedOrder)
     .catch((err) => {

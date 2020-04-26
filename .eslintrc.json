@@ -19,6 +19,8 @@
       "no-unused-vars": ["error", { "argsIgnorePattern": "next" }],
       "no-console": "off",
       "object-shorthand": "off",
-      "prefer-destructuring": "off"
+      "prefer-destructuring": "off",
+      "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+      "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsForRegex": ["new([a-zA-Z]*)Params"] }]
     }
 }
