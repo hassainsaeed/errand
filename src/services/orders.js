@@ -60,13 +60,12 @@ function getOrders(ids) {
 }
 
 
-function createOrder(requesterUserId, list, storeName, requesterLatitude, requesterLongitude) {
+function createOrder(requesterUserId, list, requesterLatitude, requesterLongitude) {
   console.log('Creating a brand new order ...');
   const today = new Date();
   const newOrderInput = {
     requester_user_id: requesterUserId,
     list: list,
-    store_name: storeName,
     requester_latitude: requesterLatitude,
     requester_longitude: requesterLongitude,
     created_at: today.toISOString().slice(0, 19).replace('T', ' '),
@@ -86,12 +85,13 @@ function createOrder(requesterUserId, list, storeName, requesterLatitude, reques
     });
 }
 
-function assignOrder(runnerUserId, runnerJobId, orderId) {
+function assignOrder(runnerUserId, runnerJobId, storeName, orderId) {
   // TO DO: add "Time runner accepted job to the orders"
   // today = new Date() ---> time runner accepted job
   const runnerInfo = {
     runner_user_id: runnerUserId,
     runner_job_id: runnerJobId,
+    store_name: storeName,
     status: 'IN PROGRESS',
   };
   return dbUpdateOrderWithRunnerInfo(runnerInfo, orderId)
