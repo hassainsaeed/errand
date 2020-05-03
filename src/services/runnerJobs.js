@@ -1,4 +1,7 @@
-const mySqlConnection = require('../loaders/mySql');
+const Container = require('typedi').Container;
+
+const mySqlConnection = Container.get('mySqlConnection');
+const logger = Container.get('logger');
 
 function dbCreateNewRunnerJob(newRunnerJobParams) {
   return new Promise(((resolve, reject) => {
@@ -7,7 +10,7 @@ function dbCreateNewRunnerJob(newRunnerJobParams) {
         reject(new Error(`❌ Something went wrong when trying to create the runner job: ${err.message}`));
       } else {
         newRunnerJobParams.id = res.insertId;
-        console.log('✔️  Created runner job ID: ', newRunnerJobParams.id);
+        logger.info('✔️  Created runner job ID: ', newRunnerJobParams.id);
         resolve(newRunnerJobParams);
       }
     });
@@ -47,7 +50,7 @@ function isWithinDistance(runnerLatitude, runnerLongitude, radius,
         * Math.sin(deltaLongInRad / 2) * Math.sin(deltaLongInRad / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = earthsRadiusinKm * c;
-  console.log(`Distance is: ${distance}`);
+  logger.info(`🧮 Distance is: ${distance}`);
   if (distance < radius) return true;
   return false;
 }
@@ -63,7 +66,7 @@ function isWithinDistance(runnerLatitude, runnerLongitude, radius,
 
 
 function createJob(userId, runnerLatitude, runnerLongitude, radius, storeName) {
-  console.log(' Creating a new runner job...');
+  logger.info(' Creating a new runner job...');
   const today = new Date();
   const newJobInput = {
     runners_user_id: userId,
@@ -84,7 +87,7 @@ function createJob(userId, runnerLatitude, runnerLongitude, radius, storeName) {
 }
 
 function getJobs() {
-  console.log('🏃 Getting all active runner jobs ...');
+  logger.info('🏃 Getting all active runner jobs ...');
   return dbGetActiveRunnerJobs()
     .then((runnerJobs) => runnerJobs)
     .catch((err) => {
@@ -93,7 +96,7 @@ function getJobs() {
 }
 
 function getJobsDeliveringToLocation(requesterLatitude, requesterLongitude) {
-  console.log('🏃 Getting all active runner jobs delivering to this user\'s location...');
+  logger.info('🏃 Getting all active runner jobs delivering to this user\'s location...');
   return dbGetActiveRunnerJobs()
     .then((results) => {
       const allRunnerJobs = results;

@@ -19,6 +19,7 @@
   "homepage": "https://github.com/hassainsaeed/errand#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "bunyan": "^1.8.12",
     "cors": "^2.8.5",
     "db-migrate": "^0.11.6",
     "db-migrate-mysql": "^2.1.1",
@@ -27,7 +28,8 @@
     "express-jwt": "^5.3.3",
     "jsonwebtoken": "^8.5.1",
     "method-override": "^3.0.0",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "typedi": "^0.8.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

@@ -1,6 +1,9 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const mySqlConnection = require('../loaders/mySql');
+const Container = require('typedi').Container;
+
+const mySqlConnection = Container.get('mySqlConnection');
+const logger = Container.get('logger');
 const config = require('../config');
 
 
@@ -49,15 +52,15 @@ function dbQueryForUser(email, password) {
       if (res.length < 1) {
         reject(new Error('❌ Could not verify email'));
       } else {
-        console.log('✔️  Email verified');
+        logger.info('✔️  Email verified');
         const user = res[0];
         const hashedPassword = user.password;
         const {
           salt,
         } = user;
-        console.log('🤔  Verifying password...');
+        logger.info('🤔  Verifying password...');
         if (generateHash(password, salt).passwordWithSaltHash === hashedPassword) {
-          console.log('✔️  Password verfied');
+          logger.info('✔️  Password verified');
           resolve(user);
         } else {
           reject(new Error('❌ Could not verify password'));
@@ -74,7 +77,7 @@ function dbInsertNewUser(newUserParams) {
         reject(new Error(`❌ Something went wrong while trying to create your account: ${err.message}`));
       } else {
         newUserParams.id = res.insertId;
-        console.log('✔️  Created user ID: ', newUserParams.id);
+        logger.info('✔️  Created user ID: ', newUserParams.id);
         resolve(newUserParams);
       }
     });
@@ -106,7 +109,7 @@ async function signUp(firstName, lastName, email, password, phoneNumber) {
 async function signIn(email, password) {
   const today = new Date();
 
-  console.log('🤔  Verifying email address...');
+  logger.info('🤔  Verifying email address...');
   return dbQueryForUser(email, password)
     .then((user) => generateToken(user, today))
     .catch((err) => {

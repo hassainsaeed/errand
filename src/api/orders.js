@@ -1,6 +1,10 @@
 const express = require('express');
+const Container = require('typedi').Container;
+
+const logger = Container.get('logger');
 const middleware = require('./middleware');
 const ordersService = require('../services/orders');
+
 
 const router = express.Router();
 
@@ -11,10 +15,10 @@ router.get('/', middleware.verifyToken, async (req, res, next) => {
 
   try {
     const returnedOrders = await ordersService.getOrders(ids);
-    console.log(`Returning Order with ids: ${ids} `);
+    logger.info(`💪 Returning Order with ids: ${ids} `);
     return res.status(200).json({ returnedOrders });
   } catch (err) {
-    console.log(`🔥 Error! ${err}`);
+    logger.error(`🔥 Error! ${err}`);
     return next(err);
   }
 });
@@ -29,10 +33,10 @@ router.post('/', middleware.verifyToken, async (req, res, next) => {
   try {
     const createdOrder = await ordersService.createOrder(requesterUserId, list,
       requesterLatitude, requesterLongitude);
-    console.log(`💪 ${requesterUserId} just created a new Order`);
+    logger.info(`💪 ${requesterUserId} just created a new Order`);
     return res.status(201).json({ createdOrder });
   } catch (err) {
-    console.log(`🔥 Error! ${err}`);
+    logger.error(`🔥 Error! ${err}`);
     return next(err);
   }
 });
@@ -47,10 +51,10 @@ router.put('/assign', middleware.verifyToken, async (req, res, next) => {
   try {
     const assignedOrder = await ordersService.assignOrder(runnerUserId,
       runnerJobId, storeName, orderId);
-    console.log(`💪 ${runnerUserId} is now assigned to order ${orderId}`);
+    logger.info(`💪 ${runnerUserId} is now assigned to order ${orderId}`);
     return res.status(200).json({ assignedOrder });
   } catch (err) {
-    console.log(`🔥 Error! ${err}`);
+    logger.error(`🔥 Error! ${err}`);
     return next(err);
   }
 });

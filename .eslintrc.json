@@ -17,7 +17,6 @@
     "rules": {
       "global-require": "off",
       "no-unused-vars": ["error", { "argsIgnorePattern": "next" }],
-      "no-console": "off",
       "object-shorthand": "off",
       "prefer-destructuring": "off",
       "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
