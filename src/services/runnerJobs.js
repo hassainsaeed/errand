@@ -1,8 +1,8 @@
 const Container = require('typedi').Container;
+const { Client, Status } = require('@googlemaps/google-maps-services-js');
 
 const mySqlConnection = Container.get('mySqlConnection');
 const logger = Container.get('logger');
-const { Client, Status } = require('@googlemaps/google-maps-services-js');
 
 const config = require('../config');
 
@@ -42,56 +42,35 @@ function dbGetActiveRunnerJobs() {
 function isWithinDistanceGoogleMaps(runnerLatitude, runnerLongitude, radius,
   requesterLatitude, requesterLongitude) {
   const radiusInMetres = radius * 1000;
-  client
-    .distancematrix({
-      params: {
-        origins: [{ lat: runnerLatitude, lng: runnerLongitude }],
-        destinations: [{ lat: requesterLatitude, lng: requesterLongitude }],
-        key: config.GOOGLE_MAPS_API_KEY,
-        units: 'metric',
-      },
-      timeout: 1000, // milliseconds
-    })
-    .then((res) => {
-      if (res.data.status === Status.OK) {
-        logger.info(res.data.rows[0].elements[0].distance);
-        const distance = res.data.rows[0].elements[0].distance.value;
-        logger.info(`radius = ${radiusInMetres} and distance is ${distance} and isWithinDistance=${distance < radiusInMetres}`);
-        if (distance < radiusInMetres) return true;
-      } else {
-        logger.error(res.data.error_message);
-      }
-      return false;
-    })
-    .catch((err) => {
-      logger.info(err);
-      return false;
-    });
+  return new Promise(((resolve, reject) => {
+    client
+      .distancematrix({
+        params: {
+          origins: [{ lat: runnerLatitude, lng: runnerLongitude }],
+          destinations: [{ lat: requesterLatitude, lng: requesterLongitude }],
+          key: config.GOOGLE_MAPS_API_KEY,
+          units: 'metric',
+        },
+        timeout: 1000, // milliseconds
+      })
+      .then((res) => {
+        if (res.data.status === Status.OK && res.data.rows[0].elements[0].status === Status.OK) {
+          logger.info(`📍 Google Maps DistanceMatrix between Runner and Receiver: ${res.data.rows[0].elements[0].distance}`);
+          const distance = res.data.rows[0].elements[0].distance.value;
+          logger.info(`🧮 Distance is ${distance} and radius is ${radiusInMetres}, so isWithinDistance=${distance < radiusInMetres}`);
+          if (distance < radiusInMetres) resolve(true);
+        } else {
+          logger.error(res.data.error_message);
+        }
+        resolve(false);
+      })
+      .catch((err) => {
+        logger.info(err);
+        reject(err);
+      });
+  }));
 }
 
-
-// This function calculates the straight line distance (e.g as the crow flies)
-// between runner and requester and returns true if distance is less than radius
-// Taken from https://www.movable-type.co.uk/scripts/latlong.html
-// Note 'as crow flies' is different than driving distance, so we many need to change this
-function isWithinDistance(runnerLatitude, runnerLongitude, radius,
-  requesterLatitude, requesterLongitude) {
-  const earthsRadiusinKm = 6371;
-  const deltaLatInRad = ((parseFloat(requesterLatitude) - parseFloat(runnerLatitude))
-  * Math.PI) / 180;
-  const deltaLongInRad = ((parseFloat(requesterLongitude) - parseFloat(runnerLongitude))
-  * Math.PI) / 180;
-  const runnerLatInRad = (parseFloat(runnerLatitude) * Math.PI) / 180;
-  const requesterLatInRad = (parseFloat(requesterLatitude) * Math.PI) / 180;
-  const a = Math.sin(deltaLatInRad / 2) * Math.sin(deltaLatInRad / 2)
-        + Math.cos(runnerLatInRad) * Math.cos(requesterLatInRad)
-        * Math.sin(deltaLongInRad / 2) * Math.sin(deltaLongInRad / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = earthsRadiusinKm * c;
-  logger.info(`🧮 Distance is: ${distance}`);
-  if (distance < radius) return true;
-  return false;
-}
 
 // function requestRunners(order) {
 //   // First grab list of all runners delivering to location of requester
@@ -133,19 +112,23 @@ function getJobs() {
     });
 }
 
-async function getJobsDeliveringToLocation(requesterLatitude, requesterLongitude) {
+function getJobsDeliveringToLocation(requesterLatitude, requesterLongitude) {
   logger.info('🏃 Getting all active runner jobs delivering to this user\'s location...');
   return dbGetActiveRunnerJobs()
-    .then((results) => {
+    .then(async (results) => {
       const allRunnerJobs = results;
       let i;
       const runnerJobsDeliveringToLocation = [];
       for (i = 0; i < allRunnerJobs.length; i++) {
-        if (isWithinDistance(allRunnerJobs[i].runner_latitude,
+        await isWithinDistanceGoogleMaps(allRunnerJobs[i].runner_latitude,
           allRunnerJobs[i].runner_longitude, allRunnerJobs[i].radius,
-          requesterLatitude, requesterLongitude)) {
-          runnerJobsDeliveringToLocation.push(allRunnerJobs[i]);
-        }
+          requesterLatitude, requesterLongitude)
+          .then((withinDistance) => {
+            if (withinDistance) runnerJobsDeliveringToLocation.push(allRunnerJobs[i]);
+          })
+          .catch((err) => {
+            throw err;
+          });
       }
       return runnerJobsDeliveringToLocation;
     })
