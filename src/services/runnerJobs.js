@@ -2,6 +2,11 @@ const Container = require('typedi').Container;
 
 const mySqlConnection = Container.get('mySqlConnection');
 const logger = Container.get('logger');
+const { Client, Status } = require('@googlemaps/google-maps-services-js');
+
+const config = require('../config');
+
+const client = new Client({});
 
 function dbCreateNewRunnerJob(newRunnerJobParams) {
   return new Promise(((resolve, reject) => {
@@ -31,6 +36,39 @@ function dbGetActiveRunnerJobs() {
     });
   }));
 }
+
+// Using Google Maps to calculate distance between runner and reciever:
+// TO DO: Promisify this
+function isWithinDistanceGoogleMaps(runnerLatitude, runnerLongitude, radius,
+  requesterLatitude, requesterLongitude) {
+  const radiusInMetres = radius * 1000;
+  client
+    .distancematrix({
+      params: {
+        origins: [{ lat: runnerLatitude, lng: runnerLongitude }],
+        destinations: [{ lat: requesterLatitude, lng: requesterLongitude }],
+        key: config.GOOGLE_MAPS_API_KEY,
+        units: 'metric',
+      },
+      timeout: 1000, // milliseconds
+    })
+    .then((res) => {
+      if (res.data.status === Status.OK) {
+        logger.info(res.data.rows[0].elements[0].distance);
+        const distance = res.data.rows[0].elements[0].distance.value;
+        logger.info(`radius = ${radiusInMetres} and distance is ${distance} and isWithinDistance=${distance < radiusInMetres}`);
+        if (distance < radiusInMetres) return true;
+      } else {
+        logger.error(res.data.error_message);
+      }
+      return false;
+    })
+    .catch((err) => {
+      logger.info(err);
+      return false;
+    });
+}
+
 
 // This function calculates the straight line distance (e.g as the crow flies)
 // between runner and requester and returns true if distance is less than radius
@@ -95,7 +133,7 @@ function getJobs() {
     });
 }
 
-function getJobsDeliveringToLocation(requesterLatitude, requesterLongitude) {
+async function getJobsDeliveringToLocation(requesterLatitude, requesterLongitude) {
   logger.info('🏃 Getting all active runner jobs delivering to this user\'s location...');
   return dbGetActiveRunnerJobs()
     .then((results) => {
