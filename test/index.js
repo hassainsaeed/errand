@@ -1,17 +1,15 @@
-describe('Errand E2E Tests', () => {
+describe('Errand Integration Tests', () => {
   let app;
 
   beforeEach(async () => {
-    app = await require('./server.js')
-  })
+    app = await require('./server.js');
+  });
 
   describe('Auth - Sign Up Test', () => {
-    require('./auth/signup.test.js')
-  })
+    require('./auth/signup.test.js');
+  });
 
   afterEach(async () => {
     await app.close;
-  })
-
-
+  });
 });

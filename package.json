@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/index.js",
     "inspect": "node --inspect src/index.js",
-    "test": "node ./node_modules/.bin/mocha --exit"
+    "test": "node ./node_modules/.bin/mocha --exit",
+    "lint": "node ./node_modules/.bin/eslint --fix ."
   },
   "repository": {
     "type": "git",

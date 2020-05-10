@@ -1,5 +1,5 @@
 const Container = require('typedi').Container;
-const { Client, Status } = require('@googlemaps/google-maps-services-js'); //TO DO: Move this to dependencyInjector
+const { Client, Status } = require('@googlemaps/google-maps-services-js'); // TO DO: Move this to dependencyInjector
 
 const mySqlConnection = Container.get('mySqlConnection');
 const logger = Container.get('logger');

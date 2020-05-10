@@ -11,8 +11,7 @@ const authMockUserData = {
   email: `${Math.random().toString(36).substring(7)}@gmail.com`,
   phone_number: '19056666662',
   password: 'testpassword',
-}
-
+};
 
 
 module.exports = {
@@ -21,4 +20,4 @@ module.exports = {
   authMockUserData: authMockUserData,
   hostname: config.HOSTNAME,
   port: config.PORT,
-}
+};

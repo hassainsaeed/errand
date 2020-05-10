@@ -1,5 +1,5 @@
 const express = require('express');
-const config = require('../src/config')
+const config = require('../src/config');
 
 async function startServer(app) {
   const loader = await require('../src/loaders');
@@ -13,7 +13,7 @@ async function startServer(app) {
         ###################################################
         ⚠️ Test Server listening on port: ${config.PORT} ⚠️
         ###################################################
-      `)
+      `);
   });
 
   return app;
@@ -22,4 +22,4 @@ async function startServer(app) {
 const app = express();
 const setUpApp = startServer(app);
 
-module.exports = setUpApp
+module.exports = setUpApp;
