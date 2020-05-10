@@ -1,5 +1,5 @@
 const Container = require('typedi').Container;
-const { Client, Status } = require('@googlemaps/google-maps-services-js');
+const { Client, Status } = require('@googlemaps/google-maps-services-js'); //TO DO: Move this to dependencyInjector
 
 const mySqlConnection = Container.get('mySqlConnection');
 const logger = Container.get('logger');
@@ -38,7 +38,6 @@ function dbGetActiveRunnerJobs() {
 }
 
 // Using Google Maps to calculate distance between runner and reciever:
-// TO DO: Promisify this
 function isWithinDistanceGoogleMaps(runnerLatitude, runnerLongitude, radius,
   requesterLatitude, requesterLongitude) {
   const radiusInMetres = radius * 1000;

@@ -8,6 +8,7 @@ if (!envFound) {
 }
 
 module.exports = {
+  HOSTNAME: process.env.HOSTNAME,
   PORT: parseInt(process.env.PORT, 10),
   DB_HOST: process.env.DB_HOST,
   DB_USER: process.env.DB_USER,
