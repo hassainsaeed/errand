@@ -1,2 +1,1 @@
-web: db-migrate up
-web: node src/index.js
+web: node ./node_modules/.bin/db-migrate up & node src/index.js
