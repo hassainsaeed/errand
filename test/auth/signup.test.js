@@ -1,21 +1,30 @@
-const common = require('../common.js');
+function signUpTest(chai, expect, hostname, port, authMockUserData) {
+  it('expect to sign up a new user', (done) => {
+    chai.request(`${hostname}:${port}`)
+      .post('/api/auth/signup')
+      .type('json')
+      .send(authMockUserData)
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(201);
+        expect(res).to.be.json;
+        expect(res.body).to.have.property('token');
+        done();
+      });
+  });
 
-const chai = common.chai;
-const expect = common.expect;
-const authMockUserData = common.authMockUserData;
-const hostname = common.hostname;
-const port = common.port;
+  it('expect to not let you sign with the same email twice', (done) => {
+    chai.request(`${hostname}:${port}`)
+      .post('/api/auth/signup')
+      .type('json')
+      .send(authMockUserData)
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(500);
+        expect(res.body).to.have.property('errors').property('message', `❌ Something went wrong while trying to create your account: ER_DUP_ENTRY: Duplicate entry '${authMockUserData.email}' for key 'users.email'`);
+        done();
+      });
+  });
+}
 
-
-it('should sign up a random user', (done) => {
-  chai.request(`${hostname}:${port}`)
-    .post('/api/auth/signup')
-    .type('json')
-    .send(authMockUserData)
-    .end((err, res) => {
-      expect(err).to.be.null;
-      expect(res).to.have.status(201);
-      expect(res).to.be.json;
-      done();
-    });
-});
+module.exports = signUpTest;

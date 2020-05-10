@@ -11,9 +11,8 @@ const router = express.Router();
 
 // GET To get specific order, or list of orders, based on ID
 router.get('/', middleware.verifyToken, async (req, res, next) => {
-  const ids = req.query.ids.split(',');
-
   try {
+    const ids = req.query.ids.split(',');
     const returnedOrders = await ordersService.getOrders(ids);
     logger.info(`💪 Returning Order with ids: ${ids} `);
     return res.status(200).json({ returnedOrders });
@@ -23,7 +22,7 @@ router.get('/', middleware.verifyToken, async (req, res, next) => {
   }
 });
 
-// POST to create order. Must HAVE RUNNER JOB ID
+// POST to create an order for a requester
 router.post('/', middleware.verifyToken, async (req, res, next) => {
   const requesterUserId = req.body.user_id;
   const list = req.body.list;

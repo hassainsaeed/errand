@@ -2,7 +2,8 @@
     "env": {
         "commonjs": true,
         "es6": true,
-        "node": true
+        "node": true,
+        "mocha": true
     },
     "extends": [
         "airbnb-base"
@@ -22,6 +23,8 @@
       "no-await-in-loop": "off",
       "no-loop-func": "off",
       "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
-      "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsForRegex": ["new([a-zA-Z]*)Params"] }]
+      "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsForRegex": ["new([a-zA-Z]*)Params"] }],
+      "no-unused-expressions": "off",
+      "import/no-dynamic-require": "off"
     }
 }

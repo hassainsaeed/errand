@@ -16,7 +16,7 @@ const verifyToken = (req, res, next) => {
           message: 'Unauthorized: Token is not valid',
         });
       }
-      req.decoded = decoded;
+      // req.decoded = decoded; - not used at the moment
       next();
     });
   } else {

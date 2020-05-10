@@ -33,7 +33,7 @@ router.post('/signin', async (req, res, next) => {
   try {
     const token = await authServiceInstance.signIn(email, password);
     logger.info(`😊 ${email} is now signed in!`);
-    return res.status(201).json({ token });
+    return res.status(200).json({ token });
   } catch (err) {
     logger.error(`🔥 Error! ${err}`);
     return next(err);
