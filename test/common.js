@@ -50,5 +50,5 @@ module.exports = {
   ordersMockData: ordersMockData,
   runnerJobsMockData: runnerJobsMockData,
   hostname: config.HOSTNAME,
-  port: config.PORT,
+  port: config.API_PORT,
 };

@@ -9,6 +9,8 @@ const BunyanLoggerInstance = bunyan.createLogger({
     path: 'errand.log',
     period: '7d',
     count: 4,
+  }, {
+    stream: process.stdout,
   }],
 });
 
