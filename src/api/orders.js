@@ -1,25 +1,28 @@
 const express = require('express');
+const Container = require('typedi').Container;
+
+const logger = Container.get('logger');
 const middleware = require('./middleware');
 const ordersService = require('../services/orders');
+
 
 const router = express.Router();
 
 
 // GET To get specific order, or list of orders, based on ID
 router.get('/', middleware.verifyToken, async (req, res, next) => {
-  const ids = req.query.ids.split(',');
-
   try {
+    const ids = req.query.ids.split(',');
     const returnedOrders = await ordersService.getOrders(ids);
-    console.log(`Returning Order with ids: ${ids} `);
+    logger.info(`💪 Returning Order with ids: ${ids} `);
     return res.status(200).json({ returnedOrders });
   } catch (err) {
-    console.log(`🔥 Error! ${err}`);
+    logger.error(`🔥 Error! ${err}`);
     return next(err);
   }
 });
 
-// POST to create order. Must HAVE RUNNER JOB ID
+// POST to create an order for a requester
 router.post('/', middleware.verifyToken, async (req, res, next) => {
   const requesterUserId = req.body.user_id;
   const list = req.body.list;
@@ -27,11 +30,12 @@ router.post('/', middleware.verifyToken, async (req, res, next) => {
   const requesterLongitude = req.body.requester_longitude;
 
   try {
-    const createdOrder = await ordersService.createOrder(requesterUserId, list, requesterLatitude, requesterLongitude);
-    console.log(`${requesterUserId} just created a new Order`);
+    const createdOrder = await ordersService.createOrder(requesterUserId, list,
+      requesterLatitude, requesterLongitude);
+    logger.info(`💪 ${requesterUserId} just created a new Order`);
     return res.status(201).json({ createdOrder });
   } catch (err) {
-    console.log(`🔥 Error! ${err}`);
+    logger.error(`🔥 Error! ${err}`);
     return next(err);
   }
 });
@@ -44,11 +48,12 @@ router.put('/assign', middleware.verifyToken, async (req, res, next) => {
   const orderId = req.body.order_id;
 
   try {
-    const assignedOrder = await ordersService.assignOrder(runnerUserId, runnerJobId, storeName, orderId);
-    console.log(`${runnerUserId} is now assigned to order ${orderId}`);
+    const assignedOrder = await ordersService.assignOrder(runnerUserId,
+      runnerJobId, storeName, orderId);
+    logger.info(`💪 ${runnerUserId} is now assigned to order ${orderId}`);
     return res.status(200).json({ assignedOrder });
   } catch (err) {
-    console.log(`🔥 Error! ${err}`);
+    logger.error(`🔥 Error! ${err}`);
     return next(err);
   }
 });

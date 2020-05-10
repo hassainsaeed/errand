@@ -2,6 +2,7 @@
 
 const mysql = require('mysql');
 const config = require('../config');
+const logger = require('./logger');
 
 const connection = mysql.createConnection({
   host: config.DB_HOST,
@@ -12,10 +13,10 @@ const connection = mysql.createConnection({
 
 connection.connect((err) => {
   if (err) {
-    return console.error(`error: ${err.message}`);
+    return logger.error(`error: ${err.message}`);
   }
 
-  return console.log('🔗 Connected to the MySQL server.');
+  return logger.info('🔗 Connected to the MySQL server.');
 });
 
 

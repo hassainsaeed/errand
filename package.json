@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/index.js",
     "inspect": "node --inspect src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node ./node_modules/.bin/nyc ./node_modules/.bin/mocha --exit",
+    "lint": "node ./node_modules/.bin/eslint --fix ."
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,12 @@
   },
   "homepage": "https://github.com/hassainsaeed/errand#readme",
   "dependencies": {
+    "@googlemaps/google-maps-services-js": "^2.6.0",
+    "axios": "^0.19.2",
     "body-parser": "^1.19.0",
+    "bunyan": "^1.8.12",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "cors": "^2.8.5",
     "db-migrate": "^0.11.6",
     "db-migrate-mysql": "^2.1.1",
@@ -27,11 +33,15 @@
     "express-jwt": "^5.3.3",
     "jsonwebtoken": "^8.5.1",
     "method-override": "^3.0.0",
-    "mysql": "^2.18.1"
+    "mocha": "^7.1.2",
+    "mysql": "^2.18.1",
+    "os": "^0.1.1",
+    "typedi": "^0.8.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",
-    "eslint-plugin-import": "^2.20.2"
+    "eslint-plugin-import": "^2.20.2",
+    "nyc": "^15.0.1"
   }
 }

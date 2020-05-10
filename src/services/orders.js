@@ -1,5 +1,8 @@
-const mySqlConnection = require('../loaders/mySql');
-const runnerService = require('./runnerJobs');
+const Container = require('typedi').Container;
+
+const mySqlConnection = Container.get('mySqlConnection');
+const logger = Container.get('logger');
+// const runnerService = require('./runnerJobs');
 
 
 // function checkIfOrderAccepted(orderID) {
@@ -15,7 +18,6 @@ function dbGetOrdersByIds(ids) {
       if (err) {
         reject(new Error(`❌ Something went wrong when querying for orders: ${err.message}`));
       } else {
-        console.log(JSON.stringify(res));
         resolve(res);
       }
     });
@@ -29,7 +31,7 @@ function dbCreateNewOrder(newOrderParams) {
         reject(new Error(`❌ Something went wrong when trying to create the new order: ${err.message}`));
       } else {
         newOrderParams.id = res.insertId;
-        console.log('✔️  Created Order ID: ', newOrderParams.id);
+        logger.info('✔️  Created Order ID: ', newOrderParams.id);
         resolve(newOrderParams);
       }
     });
@@ -42,7 +44,7 @@ function dbUpdateOrderWithRunnerInfo(runnerInfo, orderId) {
       if (err) {
         reject(new Error(`❌ Something went wrong when trying to assign the order to the runner: ${err.message}`));
       } else {
-        console.log('✔️  Updated Order ID: ', orderId);
+        logger.info('✔️  Updated Order ID: ', orderId);
         resolve(orderId);
       }
     });
@@ -51,7 +53,7 @@ function dbUpdateOrderWithRunnerInfo(runnerInfo, orderId) {
 
 
 function getOrders(ids) {
-  console.log(`Fetching order IDs of ${ids}`);
+  logger.info(`🎁 Fetching order IDs of ${ids}`);
   return dbGetOrdersByIds(ids)
     .then((orders) => orders)
     .catch((err) => {
@@ -61,7 +63,7 @@ function getOrders(ids) {
 
 
 function createOrder(requesterUserId, list, requesterLatitude, requesterLongitude) {
-  console.log('Creating a brand new order ...');
+  logger.info('🎁 Creating a brand new order ...');
   const today = new Date();
   const newOrderInput = {
     requester_user_id: requesterUserId,
@@ -88,12 +90,14 @@ function createOrder(requesterUserId, list, requesterLatitude, requesterLongitud
 function assignOrder(runnerUserId, runnerJobId, storeName, orderId) {
   // TO DO: add "Time runner accepted job to the orders"
   // today = new Date() ---> time runner accepted job
+  logger.info(`🎁🏃 Assigning Runner ${runnerUserId} to Order ${orderId}`);
   const runnerInfo = {
     runner_user_id: runnerUserId,
     runner_job_id: runnerJobId,
     store_name: storeName,
     status: 'IN PROGRESS',
   };
+
   return dbUpdateOrderWithRunnerInfo(runnerInfo, orderId)
     .then((assignedOrder) => assignedOrder)
     .catch((err) => {
