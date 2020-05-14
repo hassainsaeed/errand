@@ -1,7 +1,7 @@
 const Container = require('typedi').Container;
 const { Client, Status } = require('@googlemaps/google-maps-services-js'); // TO DO: Move this to dependencyInjector
 
-const mySqlConnection = Container.get('mySqlConnection');
+const mySqlPool = Container.get('mySqlPool');
 const logger = Container.get('logger');
 
 const config = require('../config');
@@ -10,7 +10,7 @@ const client = new Client({});
 
 function dbCreateNewRunnerJob(newRunnerJobParams) {
   return new Promise(((resolve, reject) => {
-    mySqlConnection.query('INSERT INTO runner_jobs SET ? ', newRunnerJobParams, (err, res) => {
+    mySqlPool.query('INSERT INTO runner_jobs SET ? ', newRunnerJobParams, (err, res) => {
       if (err) {
         reject(new Error(`❌ Something went wrong when trying to create the runner job: ${err.message}`));
       } else {
@@ -27,7 +27,7 @@ function dbGetActiveRunnerJobs() {
   const status = 'ACTIVE';
   const isAcceptingRequests = true;
   return new Promise(((resolve, reject) => {
-    mySqlConnection.query('SELECT * FROM runner_jobs WHERE status = ? AND is_accepting_requests = ?', [status, isAcceptingRequests], (err, res) => {
+    mySqlPool.query('SELECT * FROM runner_jobs WHERE status = ? AND is_accepting_requests = ?', [status, isAcceptingRequests], (err, res) => {
       if (err) {
         reject(new Error(`❌ Something went wrong when querying for runner job: ${err.message}`));
       } else {

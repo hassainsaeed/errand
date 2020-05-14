@@ -5,11 +5,11 @@ async function loader(expressApp) {
   const logger = require('./logger');
   logger.info('📝 Logger is loaded');
 
-  const mySqlConnection = await require('./mySql');
+  const mySqlPool = await require('./mySql');
   logger.info('📊 MySQL DB Loaded and Ready');
 
   const dependencyInjectorSetUp = await require('./dependencyInjector');
-  dependencyInjectorSetUp(mySqlConnection);
+  dependencyInjectorSetUp(mySqlPool);
   logger.info('💉 Dependency Injector Loaded and Ready');
 
   const expressSetUp = await require('./express');

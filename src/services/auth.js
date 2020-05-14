@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const Container = require('typedi').Container;
 
-const mySqlConnection = Container.get('mySqlConnection');
+const mySqlPool = Container.get('mySqlPool');
 const logger = Container.get('logger');
 const config = require('../config');
 
@@ -48,7 +48,7 @@ function generateToken(user, today) {
 
 function dbQueryForUser(email, password) {
   return new Promise(((resolve, reject) => {
-    mySqlConnection.query('SELECT * FROM users WHERE email = ? ', email, (err, res) => {
+    mySqlPool.query('SELECT * FROM users WHERE email = ? ', email, (err, res) => {
       if (res.length < 1) {
         reject(new Error('❌ Could not verify email'));
       } else {
@@ -72,7 +72,7 @@ function dbQueryForUser(email, password) {
 
 function dbInsertNewUser(newUserParams) {
   return new Promise(((resolve, reject) => {
-    mySqlConnection.query('INSERT INTO users SET ?', newUserParams, (err, res) => {
+    mySqlPool.query('INSERT INTO users SET ?', newUserParams, (err, res) => {
       if (err) {
         reject(new Error(`❌ Something went wrong while trying to create your account: ${err.message}`));
       } else {

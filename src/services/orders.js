@@ -1,6 +1,6 @@
 const Container = require('typedi').Container;
 
-const mySqlConnection = Container.get('mySqlConnection');
+const mySqlPool = Container.get('mySqlPool');
 const logger = Container.get('logger');
 // const runnerService = require('./runnerJobs');
 
@@ -14,7 +14,7 @@ const logger = Container.get('logger');
 
 function dbGetOrdersByIds(ids) {
   return new Promise((resolve, reject) => {
-    mySqlConnection.query('SELECT * FROM orders WHERE id IN (?) ', [ids], (err, res) => {
+    mySqlPool.query('SELECT * FROM orders WHERE id IN (?) ', [ids], (err, res) => {
       if (err) {
         reject(new Error(`❌ Something went wrong when querying for orders: ${err.message}`));
       } else {
@@ -26,7 +26,7 @@ function dbGetOrdersByIds(ids) {
 
 function dbCreateNewOrder(newOrderParams) {
   return new Promise((resolve, reject) => {
-    mySqlConnection.query('INSERT INTO orders SET ? ', newOrderParams, (err, res) => {
+    mySqlPool.query('INSERT INTO orders SET ? ', newOrderParams, (err, res) => {
       if (err) {
         reject(new Error(`❌ Something went wrong when trying to create the new order: ${err.message}`));
       } else {
@@ -40,7 +40,7 @@ function dbCreateNewOrder(newOrderParams) {
 
 function dbUpdateOrderWithRunnerInfo(runnerInfo, orderId) {
   return new Promise((resolve, reject) => {
-    mySqlConnection.query('UPDATE orders SET ? WHERE id = ? ', [runnerInfo, orderId], (err, res) => {
+    mySqlPool.query('UPDATE orders SET ? WHERE id = ? ', [runnerInfo, orderId], (err, res) => {
       if (err) {
         reject(new Error(`❌ Something went wrong when trying to assign the order to the runner: ${err.message}`));
       } else {
